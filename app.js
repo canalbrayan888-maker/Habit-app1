@@ -1,4 +1,3 @@
-// ===== ELEMENTOS =====
 const input = document.getElementById("habitInput");
 const list = document.getElementById("habitList");
 const statsText = document.getElementById("statsText");
@@ -8,261 +7,198 @@ const btnTheme = document.getElementById("toggleTheme");
 let chart;
 let currentScreen = 0;
 
-// ===== FRASES =====
 const quotes = [
   "No rompas la racha 🔥",
   "Disciplina > motivación",
   "Hazlo aunque no quieras",
-  "Vas mejor que el 80%",
-  "Un día más cuenta"
+  "Vas mejor que el 80%"
 ];
 
-// ===== CARTAS =====
 const rewards = [
-  { streak: 3, name: "Inicio", msg: "Empieza", type: "common" },
-  { streak: 5, name: "Constante", msg: "Sigue", type: "common" },
-  { streak: 10, name: "Activo", msg: "Buen ritmo", type: "common" },
-  { streak: 20, name: "Firme", msg: "No pares", type: "common" },
-  { streak: 25, name: "Enfocado", msg: "Disciplina", type: "common" },
+  // Comunes 🔵
+  { streak: 3, name: "Inicio", type: "common" },
+  { streak: 5, name: "Constante", type: "common" },
+  { streak: 10, name: "Activo", type: "common" },
+  { streak: 20, name: "Firme", type: "common" },
+  { streak: 25, name: "Enfocado", type: "common" },
+  { streak: 50, name: "Fuerte", type: "common" },
 
-  { streak: 50, name: "Máquina", msg: "Nivel alto", type: "epic" },
-  { streak: 75, name: "Guerrero", msg: "Fuerte", type: "epic" },
-  { streak: 100, name: "Titán", msg: "Dominas", type: "epic" },
-  { streak: 150, name: "Rey", msg: "Élite", type: "epic" },
+  // Épicas 🟣
+  { streak: 75, name: "Máquina", type: "epic" },
+  { streak: 100, name: "Guerrero", type: "epic" },
+  { streak: 130, name: "Titán", type: "epic" },
+  { streak: 160, name: "Alpha", type: "epic" },
+  { streak: 200, name: "Rey", type: "epic" },
 
-  { streak: 200, name: "Sabio", msg: "Disciplina total", type: "legendary" },
-  { streak: 300, name: "Invencible", msg: "Nada te detiene", type: "legendary" },
-  { streak: 500, name: "Leyenda", msg: "Nivel dios", type: "legendary" },
-  { streak: 1000, name: "Inmortal", msg: "Has ganado", type: "legendary" }
+  // Legendarias 🟡
+  { streak: 250, name: "Maestro", type: "legendary" },
+  { streak: 320, name: "Sabio", type: "legendary" },
+  { streak: 400, name: "Invencible", type: "legendary" },
+  { streak: 500, name: "Leyenda", type: "legendary" },
+  { streak: 600, name: "Dios II", type: "legendary" },
+  { streak: 700, name: "Eterno", type: "legendary" },
+  { streak: 800, name: "Overlord", type: "legendary" },
+  { streak: 900, name: "Supremo", type: "legendary" },
+  { streak: 1000, name: "Inmortal", type: "legendary" }
 ];
 
-// ===== DATA =====
 let data = JSON.parse(localStorage.getItem("data")) || {
   habits: [],
   streak: 0,
-  lastDate: null,
   history: {},
+  lastDate: null,
   fails: 0,
   rewardsUnlocked: []
 };
 
-// ===== FUNCIONES =====
-
-// Añadir hábito
-function addHabit() {
-  if (!input.value.trim()) return;
-
-  data.habits.push({ name: input.value, done: false });
-  input.value = "";
-  save(); render();
+function addHabit(){
+  if(!input.value.trim()) return;
+  data.habits.push({name:input.value,done:false});
+  input.value="";
+  save();render();
 }
 
-// Eliminar
-function deleteHabit(i) {
-  data.habits.splice(i, 1);
-  save(); render();
-}
+function toggleHabit(i){
+  data.habits[i].done=!data.habits[i].done;
 
-// Toggle hábito
-function toggleHabit(i) {
-  data.habits[i].done = !data.habits[i].done;
+  const today=new Date().toISOString().split("T")[0];
+  const done=data.habits.filter(h=>h.done).length;
+  const percent=(done/data.habits.length)*100;
 
-  const today = new Date().toISOString().split("T")[0];
-  const done = data.habits.filter(h => h.done).length;
-  const percent = (done / data.habits.length) * 100;
-
-  if (percent >= 80) data.history[today] = true;
-  else delete data.history[today];
+  if(percent>=80){
+    data.history[today]=true;
+  }
 
   checkStreak();
-  save(); render();
+  save();render();
 }
 
-// ===== RACHA INTELIGENTE =====
-function checkStreak() {
-  const today = new Date().toISOString().split("T")[0];
-  if (data.lastDate === today) return;
+function checkStreak(){
+  const today=new Date().toISOString().split("T")[0];
+  if(data.lastDate===today) return;
 
-  const done = data.habits.filter(h => h.done).length;
-  const percent = (done / data.habits.length) * 100;
+  const done=data.habits.filter(h=>h.done).length;
+  const percent=(done/data.habits.length)*100;
 
-  if (percent >= 80) {
+  if(percent>=80){
     data.streak++;
-    data.fails = 0;
+    data.fails=0;
     checkRewards();
-  } else {
+  }else{
     data.fails++;
-    if (data.fails >= 2) {
-      data.streak = 0;
-      data.fails = 0;
+    if(data.fails>=2){
+      data.streak=0;
+      data.fails=0;
     }
   }
 
-  data.lastDate = today;
+  data.lastDate=today;
 }
 
-// ===== DESBLOQUEO =====
-function checkRewards() {
-  rewards.forEach(r => {
-    if (data.streak >= r.streak && !data.rewardsUnlocked.includes(r.streak)) {
+function checkRewards(){
+  rewards.forEach(r=>{
+    if(data.streak>=r.streak && !data.rewardsUnlocked.includes(r.streak)){
       data.rewardsUnlocked.push(r.streak);
       showCard(r);
     }
   });
 }
 
-// ===== MODAL CARTA =====
-function showCard(card) {
-  const modal = document.getElementById("cardModal");
-
-  modal.innerHTML = `
-    <div class="card-flip">
-      <div class="card-inner flipped">
-        <div class="card-front">?</div>
-        <div class="card-back">
-          <h2>${card.name}</h2>
-          <p>${card.msg}</p>
-        </div>
-      </div>
-    </div>
-  `;
-
+function showCard(card){
+  const modal=document.getElementById("cardModal");
+  modal.innerHTML=`<div class="card"><h2>${card.name}</h2></div>`;
   modal.classList.add("active");
-  setTimeout(() => modal.classList.remove("active"), 2500);
+  setTimeout(()=>modal.classList.remove("active"),2000);
 }
 
-// ===== RENDER =====
-function render() {
-  list.innerHTML = "";
-  let done = 0;
+function render(){
+  list.innerHTML="";
+  let done=0;
 
-  data.habits.forEach((h, i) => {
-    if (h.done) done++;
+  data.habits.forEach((h,i)=>{
+    if(h.done) done++;
 
-    list.innerHTML += `
-      <div class="card habit">
-        <span>${h.name}</span>
-        <div>
-          <button onclick="toggleHabit(${i})">${h.done ? "✔" : "○"}</button>
-          <button onclick="deleteHabit(${i})">🗑️</button>
-        </div>
+    list.innerHTML+=`
+      <div class="card">
+        ${h.name}
+        <button onclick="toggleHabit(${i})">${h.done?"✔":"○"}</button>
       </div>
     `;
   });
 
-  let percent = data.habits.length ? Math.round((done / data.habits.length) * 100) : 0;
+  statsText.innerHTML=`🔥 ${data.streak}`;
 
-  statsText.innerHTML = `🔥 ${data.streak} días<br>📊 ${percent}%`;
-
-  renderChart(done, data.habits.length);
+  renderChart(done,data.habits.length);
   renderCalendar();
   renderCards();
 }
 
-// ===== GRÁFICA =====
-function renderChart(done, total) {
-  const ctx = document.getElementById("chart");
-  if (!ctx) return;
-  if (chart) chart.destroy();
+function renderChart(done,total){
+  const ctx=document.getElementById("chart");
+  if(!ctx) return;
+  if(chart) chart.destroy();
 
-  chart = new Chart(ctx, {
-    type: "doughnut",
-    data: {
-      labels: ["Hecho", "Falta"],
-      datasets: [{ data: [done, total - done] }]
+  chart=new Chart(ctx,{
+    type:"doughnut",
+    data:{
+      labels:["Hecho","Falta"],
+      datasets:[{data:[done,total-done]}]
     }
   });
 }
 
-// ===== CALENDARIO =====
-function renderCalendar() {
-  const cal = document.getElementById("calendar");
-  if (!cal) return;
+function renderCalendar(){
+  const cal=document.getElementById("calendar");
+  if(!cal) return;
+  cal.innerHTML="";
 
-  cal.innerHTML = "";
+  for(let i=30;i>=0;i--){
+    const d=new Date();
+    d.setDate(d.getDate()-i);
+    const key=d.toISOString().split("T")[0];
 
-  for (let i = 60; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-
-    const key = d.toISOString().split("T")[0];
-
-    const div = document.createElement("div");
-    div.className = "day " + (data.history[key] ? "done" : "");
-
+    const div=document.createElement("div");
+    div.className="day "+(data.history[key]?"done":"");
     cal.appendChild(div);
   }
 }
 
-// ===== CARTAS =====
-function renderCards() {
-  const c = document.getElementById("cardsContainer");
-  if (!c) return;
+function renderCards(){
+  const c=document.getElementById("cardsContainer");
+  c.innerHTML="";
 
-  c.innerHTML = "";
+  for(let i=0;i<30;i++){
+    const r=rewards[i];
 
-  const totalSlots = 30;
+    if(r){
+      const unlocked=data.rewardsUnlocked.includes(r.streak);
 
-  for (let i = 0; i < totalSlots; i++) {
-    const r = rewards[i];
-
-    if (r) {
-      const unlocked = data.rewardsUnlocked.includes(r.streak);
-
-      c.innerHTML += `
-        <div class="reward ${r.type} ${unlocked ? "unlocked" : ""}">
+      c.innerHTML+=`
+        <div class="reward ${r.type} ${unlocked?"unlocked":""}">
           ${
             unlocked
-              ? `<h4>${r.name}</h4><p>${r.msg}</p>`
-              : `<div class="locked">?</div><span class="req">${r.streak}</span>`
+            ? `<h4>${r.name}</h4>`
+            : `<div class="locked">?</div><span class="req">${r.streak}</span>`
           }
         </div>
       `;
-    } else {
-      c.innerHTML += `
-        <div class="reward">
-          <div class="locked">?</div>
-        </div>
-      `;
+    }else{
+      c.innerHTML+=`<div class="reward"><div class="locked">?</div></div>`;
     }
   }
 }
 
-// ===== FRASES =====
-quote.innerText = quotes[Math.floor(Math.random() * quotes.length)];
+quote.innerText=quotes[Math.floor(Math.random()*quotes.length)];
 
-// ===== DARK MODE =====
-btnTheme.onclick = () => {
-  document.body.classList.toggle("dark");
-};
+btnTheme.onclick=()=>document.body.classList.toggle("dark");
 
-// ===== SWIPE =====
-let startX = 0;
-document.addEventListener("touchstart", e => startX = e.touches[0].clientX);
-document.addEventListener("touchend", e => {
-  let endX = e.changedTouches[0].clientX;
-
-  const screens = ["home","stats","motivation","cards"];
-
-  if (startX - endX > 50) {
-    currentScreen = (currentScreen + 1) % screens.length;
-  } else if (endX - startX > 50) {
-    currentScreen = (currentScreen - 1 + screens.length) % screens.length;
-  }
-
-  showScreen(screens[currentScreen]);
-});
-
-// ===== CAMBIAR PANTALLA =====
-function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
 
-// ===== GUARDAR =====
-function save() {
-  localStorage.setItem("data", JSON.stringify(data));
+function save(){
+  localStorage.setItem("data",JSON.stringify(data));
 }
 
-// ===== INIT =====
 render();
