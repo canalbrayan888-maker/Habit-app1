@@ -1,67 +1,160 @@
-*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
+:root {
+  --bg: #f7f7f7;
+  --card: #ffffff;
+  --text: #111;
 
-body{background:#f5f5f5;color:#111;transition:0.3s;}
-body.dark{background:#0f0f0f;color:#fff;}
-
-.header{display:flex;justify-content:space-between;padding:15px;}
-
-.screen{display:none;padding:15px;}
-.screen.active{display:block;}
-
-.card{background:white;padding:15px;border-radius:15px;margin-bottom:10px;}
-body.dark .card{background:#1a1a1a;}
-
-.add-box{display:flex;margin-top:10px;}
-.add-box input{flex:1;padding:10px;border-radius:10px;border:none;}
-.add-box button{padding:10px;background:#6c63ff;color:white;border:none;}
-
-.nav{position:fixed;bottom:0;width:100%;display:flex;justify-content:space-around;background:white;padding:10px;}
-body.dark .nav{background:#1a1a1a;}
-
-#calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
-.day{padding-top:100%;background:#ddd;border-radius:5px;}
-.day.done{background:#6c63ff;}
-
-/* CARTAS */
-#cardsContainer{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
-
-.reward{
-  height:140px;
-  background:black;
-  color:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  border-radius:15px;
-  position:relative;
+  --accent: #ff7a00;
+  --accent-soft: #ffd9b3;
 }
 
-.locked{font-size:40px;opacity:0.3;}
+.dark {
+  --bg: #0d0d0d;
+  --card: #1a1a1a;
+  --text: #ffffff;
 
-.req{position:absolute;bottom:5px;right:8px;font-size:12px;}
-
-/* RAREZAS */
-.reward.common.unlocked{border:2px solid #4da6ff;}
-.reward.epic.unlocked{border:2px solid #b366ff;}
-.reward.legendary.unlocked{border:2px solid gold;}
-
-/* MODAL */
-#cardModal{
-  position:fixed;
-  width:100%;
-  height:100%;
-  top:0;
-  left:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:rgba(0,0,0,0.7);
-  opacity:0;
-  pointer-events:none;
-  transition:0.3s;
+  --accent: #ff7a00;
+  --accent-soft: #2a1a0d;
 }
 
-#cardModal.active{
-  opacity:1;
-  pointer-events:all;
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+}
+
+.screen {
+  display: none;
+  padding: 10px;
+}
+
+.screen.active {
+  display: block;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 15px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+button {
+  background: var(--accent);
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.card button {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.add-box {
+  display: flex;
+  gap: 10px;
+}
+
+input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 14px;
+  border: none;
+  background: var(--card);
+  color: var(--text);
+}
+
+.nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: var(--card);
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+}
+
+.day {
+  width: 10px;
+  height: 10px;
+  margin: 2px;
+  display: inline-block;
+  background: #ccc;
+  border-radius: 50%;
+}
+
+.day.done {
+  background: var(--accent);
+}
+
+/* Cartas */
+.reward {
+  width: 70px;
+  height: 90px;
+  border-radius: 16px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 5px;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  transition: 0.3s;
+}
+
+.reward.locked {
+  background: #111;
+  color: #888;
+}
+
+.reward.locked .req {
+  font-size: 12px;
+  color: #ff7a00;
+}
+
+/* Comunes */
+.reward.common {
+  background: #4caf50;
+}
+
+/* Épicas */
+.reward.epic {
+  background: linear-gradient(135deg, #7b2cff, #b066ff);
+}
+
+/* Legendarias */
+.reward.legendary {
+  background: linear-gradient(135deg, #ff7a00, #ffd700);
+  color: black;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+.modal.active {
+  animation: pop 0.4s ease;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.5) translateX(-50%); opacity: 0; }
+  100% { transform: scale(1) translateX(-50%); opacity: 1; }
 }
