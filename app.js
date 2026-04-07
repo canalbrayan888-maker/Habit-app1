@@ -5,7 +5,6 @@ const quote = document.getElementById("quote");
 const btnTheme = document.getElementById("toggleTheme");
 
 let chart;
-let currentScreen = 0;
 
 const quotes = [
   "No rompas la racha 🔥",
@@ -51,6 +50,7 @@ let data = JSON.parse(localStorage.getItem("data")) || {
   rewardsUnlocked: []
 };
 
+// ------------- HABITOS -------------
 function addHabit(){
   if(!input.value.trim()) return;
   data.habits.push({name:input.value,done:false});
@@ -95,10 +95,12 @@ function checkStreak(){
   data.lastDate=today;
 }
 
+// ------------- RECOMPENSAS -------------
 function checkRewards(){
   rewards.forEach(r=>{
-    if(data.streak>=r.streak && !data.rewardsUnlocked.includes(r.streak)){
-      data.rewardsUnlocked.push(r.streak);
+    const alreadyUnlocked = data.rewardsUnlocked.some(c=>c.streak===r.streak);
+    if(data.streak>=r.streak && !alreadyUnlocked){
+      data.rewardsUnlocked.push(r);
       showCard(r);
     }
   });
@@ -106,18 +108,24 @@ function checkRewards(){
 
 function showCard(card){
   const modal=document.getElementById("cardModal");
-  modal.innerHTML=`<div class="card"><h2>${card.name}</h2></div>`;
+  modal.innerHTML=`
+    <div class="card reward ${card.type}">
+      <h2>${card.name}</h2>
+      <p>Racha: ${card.streak} 🔥</p>
+    </div>
+  `;
   modal.classList.add("active");
-  setTimeout(()=>modal.classList.remove("active"),2000);
+  navigator.vibrate?.(100);
+  setTimeout(()=>modal.classList.remove("active"),2500);
 }
 
+// ------------- RENDER -------------
 function render(){
+  // HABITOS
   list.innerHTML="";
   let done=0;
-
   data.habits.forEach((h,i)=>{
     if(h.done) done++;
-
     list.innerHTML+=`
       <div class="card">
         ${h.name}
@@ -127,17 +135,17 @@ function render(){
   });
 
   statsText.innerHTML=`🔥 ${data.streak}`;
-
   renderChart(done,data.habits.length);
   renderCalendar();
   renderCards();
+  quote.innerText=quotes[Math.floor(Math.random()*quotes.length)];
 }
 
+// GRAFICA
 function renderChart(done,total){
   const ctx=document.getElementById("chart");
   if(!ctx) return;
   if(chart) chart.destroy();
-
   chart=new Chart(ctx,{
     type:"doughnut",
     data:{
@@ -147,58 +155,58 @@ function renderChart(done,total){
   });
 }
 
+// CALENDARIO
 function renderCalendar(){
   const cal=document.getElementById("calendar");
   if(!cal) return;
   cal.innerHTML="";
-
   for(let i=30;i>=0;i--){
     const d=new Date();
     d.setDate(d.getDate()-i);
     const key=d.toISOString().split("T")[0];
-
     const div=document.createElement("div");
     div.className="day "+(data.history[key]?"done":"");
     cal.appendChild(div);
   }
 }
 
+// CARTAS
 function renderCards(){
   const c=document.getElementById("cardsContainer");
   c.innerHTML="";
-
-  for(let i=0;i<30;i++){
-    const r=rewards[i];
-
-    if(r){
-      const unlocked=data.rewardsUnlocked.includes(r.streak);
-
+  rewards.forEach(r=>{
+    const unlocked = data.rewardsUnlocked.some(card => card.streak===r.streak);
+    if(unlocked){
       c.innerHTML+=`
-        <div class="reward ${r.type} ${unlocked?"unlocked":""}">
-          ${
-            unlocked
-            ? `<h4>${r.name}</h4>`
-            : `<div class="locked">?</div><span class="req">${r.streak}</span>`
-          }
+        <div class="reward ${r.type} unlocked">
+          <h4>${r.name}</h4>
+          <span>Racha: ${r.streak}</span>
         </div>
       `;
     }else{
-      c.innerHTML+=`<div class="reward"><div class="locked">?</div></div>`;
+      c.innerHTML+=`
+        <div class="reward locked">
+          <div class="locked">?</div>
+          <span class="req">Racha ${r.streak}</span>
+        </div>
+      `;
     }
-  }
+  });
 }
 
-quote.innerText=quotes[Math.floor(Math.random()*quotes.length)];
-
+// MODO DÍA/NOCHE
 btnTheme.onclick=()=>document.body.classList.toggle("dark");
 
+// PANTALLAS
 function showScreen(id){
   document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
 
+// LOCALSTORAGE
 function save(){
   localStorage.setItem("data",JSON.stringify(data));
 }
 
+// INICIO
 render();
