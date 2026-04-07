@@ -1,3 +1,4 @@
+// ===== ELEMENTOS =====
 const input = document.getElementById("habitInput");
 const list = document.getElementById("habitList");
 const statsText = document.getElementById("statsText");
@@ -5,33 +6,37 @@ const quote = document.getElementById("quote");
 const btnTheme = document.getElementById("toggleTheme");
 
 let chart;
-let selectedCard = null;
+let currentScreen = 0;
 
-// 🎴 CARTAS
-const rewards = [
-  { streak: 3, name: "Inicio", msg: "Todo empieza contigo" },
-  { streak: 5, name: "Constante", msg: "La disciplina nace" },
-  { streak: 10, name: "Guerrero", msg: "Ya no eres el mismo" },
-  { streak: 20, name: "Imparable", msg: "Sigues aunque cueste" },
-  { streak: 25, name: "Firme", msg: "Tu mente se fortalece" },
-  { streak: 50, name: "Monstruo", msg: "Disciplina brutal" },
-  { streak: 75, name: "Máquina", msg: "No hay excusas" },
-  { streak: 100, name: "Dios", msg: "Nivel legendario" },
-  { streak: 130, name: "Titán", msg: "Eres constante" },
-  { streak: 160, name: "Alpha", msg: "Dominas tu mente" },
-  { streak: 200, name: "Rey", msg: "Muy pocos llegan" },
-  { streak: 250, name: "Maestro", msg: "Control total" },
-  { streak: 320, name: "Sabio", msg: "Disciplina absoluta" },
-  { streak: 400, name: "Invencible", msg: "Nada te detiene" },
-  { streak: 500, name: "Leyenda", msg: "Eres élite" },
-  { streak: 600, name: "Dios II", msg: "Más allá del límite" },
-  { streak: 700, name: "Eterno", msg: "Nunca paras" },
-  { streak: 800, name: "Overlord", msg: "Nivel imposible" },
-  { streak: 900, name: "Supremo", msg: "Disciplina infinita" },
-  { streak: 1000, name: "Inmortal", msg: "Has vencido todo" }
+// ===== FRASES =====
+const quotes = [
+  "No rompas la racha 🔥",
+  "Disciplina > motivación",
+  "Hazlo aunque no quieras",
+  "Vas mejor que el 80%",
+  "Un día más cuenta"
 ];
 
-// DATOS
+// ===== CARTAS =====
+const rewards = [
+  { streak: 3, name: "Inicio", msg: "Empieza", type: "common" },
+  { streak: 5, name: "Constante", msg: "Sigue", type: "common" },
+  { streak: 10, name: "Activo", msg: "Buen ritmo", type: "common" },
+  { streak: 20, name: "Firme", msg: "No pares", type: "common" },
+  { streak: 25, name: "Enfocado", msg: "Disciplina", type: "common" },
+
+  { streak: 50, name: "Máquina", msg: "Nivel alto", type: "epic" },
+  { streak: 75, name: "Guerrero", msg: "Fuerte", type: "epic" },
+  { streak: 100, name: "Titán", msg: "Dominas", type: "epic" },
+  { streak: 150, name: "Rey", msg: "Élite", type: "epic" },
+
+  { streak: 200, name: "Sabio", msg: "Disciplina total", type: "legendary" },
+  { streak: 300, name: "Invencible", msg: "Nada te detiene", type: "legendary" },
+  { streak: 500, name: "Leyenda", msg: "Nivel dios", type: "legendary" },
+  { streak: 1000, name: "Inmortal", msg: "Has ganado", type: "legendary" }
+];
+
+// ===== DATA =====
 let data = JSON.parse(localStorage.getItem("data")) || {
   habits: [],
   streak: 0,
@@ -41,13 +46,9 @@ let data = JSON.parse(localStorage.getItem("data")) || {
   rewardsUnlocked: []
 };
 
-// CAMBIAR PANTALLA
-function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-}
+// ===== FUNCIONES =====
 
-// HÁBITOS
+// Añadir hábito
 function addHabit() {
   if (!input.value.trim()) return;
 
@@ -56,11 +57,13 @@ function addHabit() {
   save(); render();
 }
 
+// Eliminar
 function deleteHabit(i) {
   data.habits.splice(i, 1);
   save(); render();
 }
 
+// Toggle hábito
 function toggleHabit(i) {
   data.habits[i].done = !data.habits[i].done;
 
@@ -75,7 +78,7 @@ function toggleHabit(i) {
   save(); render();
 }
 
-// RACHA
+// ===== RACHA INTELIGENTE =====
 function checkStreak() {
   const today = new Date().toISOString().split("T")[0];
   if (data.lastDate === today) return;
@@ -98,21 +101,19 @@ function checkStreak() {
   data.lastDate = today;
 }
 
-// 🎴 DESBLOQUEO
+// ===== DESBLOQUEO =====
 function checkRewards() {
   rewards.forEach(r => {
     if (data.streak >= r.streak && !data.rewardsUnlocked.includes(r.streak)) {
       data.rewardsUnlocked.push(r.streak);
-      selectedCard = r;
-      setTimeout(() => showCardModal(r), 300);
+      showCard(r);
     }
   });
 }
 
-// MODAL CARTA 💀
-function showCardModal(card) {
+// ===== MODAL CARTA =====
+function showCard(card) {
   const modal = document.getElementById("cardModal");
-  modal.classList.add("active");
 
   modal.innerHTML = `
     <div class="card-flip">
@@ -126,15 +127,11 @@ function showCardModal(card) {
     </div>
   `;
 
+  modal.classList.add("active");
   setTimeout(() => modal.classList.remove("active"), 2500);
 }
 
-// GUARDAR
-function save() {
-  localStorage.setItem("data", JSON.stringify(data));
-}
-
-// RENDER
+// ===== RENDER =====
 function render() {
   list.innerHTML = "";
   let done = 0;
@@ -162,7 +159,7 @@ function render() {
   renderCards();
 }
 
-// GRÁFICA
+// ===== GRÁFICA =====
 function renderChart(done, total) {
   const ctx = document.getElementById("chart");
   if (!ctx) return;
@@ -170,11 +167,14 @@ function renderChart(done, total) {
 
   chart = new Chart(ctx, {
     type: "doughnut",
-    data: { labels: ["Hecho", "Falta"], datasets: [{ data: [done, total - done] }] }
+    data: {
+      labels: ["Hecho", "Falta"],
+      datasets: [{ data: [done, total - done] }]
+    }
   });
 }
 
-// CALENDARIO
+// ===== CALENDARIO =====
 function renderCalendar() {
   const cal = document.getElementById("calendar");
   if (!cal) return;
@@ -194,58 +194,75 @@ function renderCalendar() {
   }
 }
 
-// CARTAS
+// ===== CARTAS =====
 function renderCards() {
   const c = document.getElementById("cardsContainer");
   if (!c) return;
 
   c.innerHTML = "";
 
-  rewards.forEach(r => {
-    const unlocked = data.rewardsUnlocked.includes(r.streak);
+  const totalSlots = 30;
 
-    c.innerHTML += `
-      <div class="reward ${unlocked ? "unlocked" : ""}" onclick="openCard(${r.streak})">
-        ${unlocked ? `<h4>${r.name}</h4>` : `<div class="locked">?</div>`}
-      </div>
-    `;
-  });
-}
+  for (let i = 0; i < totalSlots; i++) {
+    const r = rewards[i];
 
-// ABRIR CARTA
-function openCard(streak) {
-  const r = rewards.find(x => x.streak === streak);
+    if (r) {
+      const unlocked = data.rewardsUnlocked.includes(r.streak);
 
-  if (!data.rewardsUnlocked.includes(streak)) {
-    alert("🔒 Necesitas racha de " + streak);
-    return;
+      c.innerHTML += `
+        <div class="reward ${r.type} ${unlocked ? "unlocked" : ""}">
+          ${
+            unlocked
+              ? `<h4>${r.name}</h4><p>${r.msg}</p>`
+              : `<div class="locked">?</div><span class="req">${r.streak}</span>`
+          }
+        </div>
+      `;
+    } else {
+      c.innerHTML += `
+        <div class="reward">
+          <div class="locked">?</div>
+        </div>
+      `;
+    }
   }
-
-  showCardModal(r);
 }
 
-// FRASES
-quote.innerText = ["Sigue", "No pares", "Disciplina"][Math.floor(Math.random()*3)];
+// ===== FRASES =====
+quote.innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
-// DARK MODE
+// ===== DARK MODE =====
 btnTheme.onclick = () => {
   document.body.classList.toggle("dark");
 };
 
-// SWIPE
+// ===== SWIPE =====
 let startX = 0;
 document.addEventListener("touchstart", e => startX = e.touches[0].clientX);
 document.addEventListener("touchend", e => {
   let endX = e.changedTouches[0].clientX;
-  if (startX - endX > 50) nextScreen();
-  if (endX - startX > 50) prevScreen();
+
+  const screens = ["home","stats","motivation","cards"];
+
+  if (startX - endX > 50) {
+    currentScreen = (currentScreen + 1) % screens.length;
+  } else if (endX - startX > 50) {
+    currentScreen = (currentScreen - 1 + screens.length) % screens.length;
+  }
+
+  showScreen(screens[currentScreen]);
 });
 
-const screens = ["home","stats","motivation","cards"];
-let current = 0;
+// ===== CAMBIAR PANTALLA =====
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
 
-function nextScreen(){current=(current+1)%screens.length;showScreen(screens[current]);}
-function prevScreen(){current=(current-1+screens.length)%screens.length;showScreen(screens[current]);}
+// ===== GUARDAR =====
+function save() {
+  localStorage.setItem("data", JSON.stringify(data));
+}
 
-// INIT
+// ===== INIT =====
 render();
