@@ -1,266 +1,67 @@
-/* ===== RESET ===== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
 
-/* ===== BODY ===== */
-body {
-  background: #f5f5f5;
-  color: #111;
-  transition: 0.3s;
-}
+body{background:#f5f5f5;color:#111;transition:0.3s;}
+body.dark{background:#0f0f0f;color:#fff;}
 
-body.dark {
-  background: #0f0f0f;
-  color: #fff;
-}
+.header{display:flex;justify-content:space-between;padding:15px;}
 
-/* ===== HEADER ===== */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-}
+.screen{display:none;padding:15px;}
+.screen.active{display:block;}
 
-.header button {
-  background: none;
-  border: none;
-  font-size: 20px;
-}
+.card{background:white;padding:15px;border-radius:15px;margin-bottom:10px;}
+body.dark .card{background:#1a1a1a;}
 
-/* ===== SCREENS ===== */
-.screen {
-  display: none;
-  padding: 15px;
-}
+.add-box{display:flex;margin-top:10px;}
+.add-box input{flex:1;padding:10px;border-radius:10px;border:none;}
+.add-box button{padding:10px;background:#6c63ff;color:white;border:none;}
 
-.screen.active {
-  display: block;
-}
+.nav{position:fixed;bottom:0;width:100%;display:flex;justify-content:space-around;background:white;padding:10px;}
+body.dark .nav{background:#1a1a1a;}
 
-/* ===== CARDS ===== */
-.card {
-  background: white;
-  padding: 15px;
-  border-radius: 15px;
-  margin-bottom: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
+#calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+.day{padding-top:100%;background:#ddd;border-radius:5px;}
+.day.done{background:#6c63ff;}
 
-body.dark .card {
-  background: #1a1a1a;
-}
+/* CARTAS */
+#cardsContainer{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
 
-/* ===== HABITS ===== */
-.habit {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.habit button {
-  margin-left: 5px;
-}
-
-/* ===== INPUT ===== */
-.add-box {
-  display: flex;
-  margin-top: 10px;
-}
-
-.add-box input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-}
-
-.add-box button {
-  margin-left: 5px;
-  padding: 10px 15px;
-  border-radius: 10px;
-  border: none;
-  background: #6c63ff;
-  color: white;
-}
-
-/* ===== NAV ===== */
-.nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  background: white;
-  padding: 10px;
-}
-
-body.dark .nav {
-  background: #1a1a1a;
-}
-
-.nav button {
-  background: none;
-  border: none;
-  font-size: 20px;
-}
-
-/* ===== CALENDARIO ===== */
-#calendar {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-  margin-top: 10px;
-}
-
-.day {
-  width: 100%;
-  padding-top: 100%;
-  border-radius: 5px;
-  background: #ddd;
-}
-
-.day.done {
-  background: #6c63ff;
-}
-
-/* ===== CARTAS ===== */
-#cardsContainer {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  padding-bottom: 80px;
-}
-
-.reward {
-  height: 140px;
-  border-radius: 18px;
-  background: black;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  transition: 0.3s;
-}
-
-.reward:active {
-  transform: scale(0.95);
-}
-
-/* BLOQUEADAS */
-.locked {
-  font-size: 40px;
-  opacity: 0.3;
-}
-
-/* TEXTO CARTA */
-.reward h4 {
-  font-size: 16px;
-}
-
-.reward p {
-  font-size: 12px;
-  opacity: 0.8;
-}
-
-/* REQUISITO */
-.req {
-  position: absolute;
-  bottom: 5px;
-  right: 8px;
-  font-size: 12px;
-  opacity: 0.7;
-}
-
-/* 🔵 COMUNES */
-.reward.common.unlocked {
-  border: 2px solid #4da6ff;
-  box-shadow: 0 0 10px #4da6ff;
-}
-
-/* 🟣 ÉPICAS */
-.reward.epic.unlocked {
-  border: 2px solid #b366ff;
-  box-shadow: 0 0 15px #b366ff;
-}
-
-/* 🟡 LEGENDARIAS */
-.reward.legendary.unlocked {
-  border: 2px solid gold;
-  box-shadow: 0 0 20px gold;
-}
-
-/* ===== MODAL ===== */
-#cardModal {
-  position: fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
+.reward{
+  height:140px;
+  background:black;
+  color:white;
   display:flex;
   justify-content:center;
   align-items:center;
-  background: rgba(0,0,0,0.7);
+  border-radius:15px;
+  position:relative;
+}
+
+.locked{font-size:40px;opacity:0.3;}
+
+.req{position:absolute;bottom:5px;right:8px;font-size:12px;}
+
+/* RAREZAS */
+.reward.common.unlocked{border:2px solid #4da6ff;}
+.reward.epic.unlocked{border:2px solid #b366ff;}
+.reward.legendary.unlocked{border:2px solid gold;}
+
+/* MODAL */
+#cardModal{
+  position:fixed;
+  width:100%;
+  height:100%;
+  top:0;
+  left:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,0.7);
   opacity:0;
   pointer-events:none;
   transition:0.3s;
 }
 
-#cardModal.active {
+#cardModal.active{
   opacity:1;
   pointer-events:all;
-}
-
-/* ===== FLIP ===== */
-.card-flip {
-  width:200px;
-  height:260px;
-  perspective:1000px;
-}
-
-.card-inner {
-  width:100%;
-  height:100%;
-  position:relative;
-  transform-style:preserve-3d;
-  transition:0.8s;
-}
-
-.card-inner.flipped {
-  transform: rotateY(180deg);
-}
-
-.card-front,
-.card-back {
-  position:absolute;
-  width:100%;
-  height:100%;
-  border-radius:15px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  backface-visibility:hidden;
-}
-
-.card-front {
-  background:#111;
-  color:#fff;
-  font-size:40px;
-}
-
-.card-back {
-  background: linear-gradient(135deg,#6c63ff,#9f7bff);
-  color:white;
-  transform: rotateY(180deg);
-  flex-direction:column;
-  padding:10px;
-  text-align:center;
 }
