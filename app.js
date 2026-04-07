@@ -12,13 +12,16 @@ function showScreen(id) {
   document.getElementById(id).classList.add("active");
 }
 
-// AGREGAR HÁBITO
+// AGREGAR
 function addHabit() {
-  if (input.value === "") return;
+  if (input.value.trim() === "") return;
 
-  habits.push({ name: input.value, done: false });
+  habits.push({
+    name: input.value,
+    done: false
+  });
+
   input.value = "";
-
   save();
   render();
 }
@@ -47,27 +50,28 @@ function render() {
     list.innerHTML += `
       <div class="card habit">
         <span>${h.name}</span>
-        <button onclick="toggleHabit(${i})">
-          ${h.done ? "✔" : "❌"}
+        <button class="check" onclick="toggleHabit(${i})">
+          ${h.done ? "✔" : "○"}
         </button>
       </div>
     `;
   });
 
-  statsText.innerText = `Completados: ${completed} / ${habits.length}`;
+  statsText.innerText = `Completados: ${completed} de ${habits.length}`;
 }
 
 // FRASES
 const quotes = [
-  "Disciplina > motivación",
-  "Hazlo sin ganas",
-  "Pequeños pasos diarios",
-  "Tu futuro depende de hoy"
+  "Disciplina mata motivación",
+  "Hazlo incluso sin ganas",
+  "1% mejor cada día",
+  "No te rindas hoy",
+  "El cambio empieza contigo"
 ];
 
 quote.innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
-// MODO OSCURO
+// TEMA
 if (localStorage.getItem("theme") === "dark") {
   document.body.classList.add("dark");
 }
