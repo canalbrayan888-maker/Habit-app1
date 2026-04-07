@@ -99,49 +99,59 @@ input {
   background: var(--accent);
 }
 
-/* Cartas */
+/* ----------------- CARTAS ----------------- */
+#cardsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .reward {
-  width: 70px;
-  height: 90px;
-  border-radius: 16px;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   margin: 5px;
+  border-radius: 16px;
   font-weight: bold;
   text-align: center;
-  color: white;
   transition: 0.3s;
+  width: 18vw;        /* responsive width */
+  max-width: 80px;     /* max width */
+  height: 25vw;        /* responsive height */
+  max-height: 100px;   /* max height */
+  font-size: 3vw;      /* responsive font */
+  color: white;
 }
 
+/* Cartas bloqueadas */
 .reward.locked {
   background: #111;
   color: #888;
 }
 
 .reward.locked .req {
-  font-size: 12px;
-  color: #ff7a00;
+  font-size: 2.5vw;
+  color: var(--accent);
 }
 
-/* Comunes */
+/* Comunes 🔵 */
 .reward.common {
   background: #4caf50;
 }
 
-/* Épicas */
+/* Épicas 🟣 */
 .reward.epic {
   background: linear-gradient(135deg, #7b2cff, #b066ff);
 }
 
-/* Legendarias */
+/* Legendarias 🟡 */
 .reward.legendary {
   background: linear-gradient(135deg, #ff7a00, #ffd700);
   color: black;
 }
 
-/* Modal */
+/* ----------------- MODAL ----------------- */
 .modal {
   position: fixed;
   top: 30%;
@@ -157,4 +167,16 @@ input {
 @keyframes pop {
   0% { transform: scale(0.5) translateX(-50%); opacity: 0; }
   100% { transform: scale(1) translateX(-50%); opacity: 1; }
+}
+
+/* ----------------- RESPONSIVE ----------------- */
+@media (max-width: 400px) {
+  .reward {
+    width: 22vw;
+    height: 28vw;
+    font-size: 3.5vw;
+  }
+  .reward.locked .req {
+    font-size: 3vw;
+  }
 }
