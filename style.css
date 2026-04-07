@@ -1,0 +1,86 @@
+:root {
+  --bg: #ffffff;
+  --text: #111;
+  --card: #f2f2f2;
+  --primary: #6C63FF;
+}
+
+.dark {
+  --bg: #0f0f0f;
+  --text: #ffffff;
+  --card: #1c1c1c;
+}
+
+body {
+  margin: 0;
+  font-family: Arial;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* PANTALLAS */
+.screen {
+  display: none;
+  padding: 20px;
+  padding-bottom: 80px;
+}
+
+.active {
+  display: block;
+}
+
+/* NAV */
+.nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  background: var(--card);
+}
+
+.nav button {
+  flex: 1;
+  padding: 15px;
+  border: none;
+  background: none;
+  font-size: 18px;
+}
+
+/* BOTONES */
+.main-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+
+/* INPUT */
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+/* CARDS */
+.card {
+  background: var(--card);
+  padding: 15px;
+  border-radius: 15px;
+  margin: 10px 0;
+}
+
+/* HÁBITOS */
+.habit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* BOTÓN MODO */
+#toggleTheme {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+}
