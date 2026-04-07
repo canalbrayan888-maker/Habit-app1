@@ -3,12 +3,14 @@
   --text: #111;
   --card: #ffffff;
   --primary: #6c63ff;
+  --shadow: 0 5px 20px rgba(0,0,0,0.08);
 }
 
 .dark {
   --bg: #0f0f0f;
   --text: #fff;
   --card: #1c1c1c;
+  --shadow: 0 5px 20px rgba(0,0,0,0.5);
 }
 
 body {
@@ -16,12 +18,14 @@ body {
   font-family: 'Segoe UI', sans-serif;
   background: var(--bg);
   color: var(--text);
+  transition: 0.3s;
 }
 
 /* HEADER */
 .header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 15px;
   font-weight: bold;
 }
@@ -31,10 +35,16 @@ body {
   display: none;
   padding: 15px;
   padding-bottom: 80px;
+  animation: fade 0.3s ease;
 }
 
 .active {
   display: block;
+}
+
+@keyframes fade {
+  from {opacity: 0; transform: translateY(10px);}
+  to {opacity: 1; transform: translateY(0);}
 }
 
 /* NAV */
@@ -44,7 +54,8 @@ body {
   width: 100%;
   display: flex;
   background: var(--card);
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
 }
 
 .nav button {
@@ -52,15 +63,26 @@ body {
   padding: 15px;
   border: none;
   background: none;
-  font-size: 18px;
+  font-size: 20px;
+  transition: 0.2s;
+}
+
+.nav button:active {
+  transform: scale(0.9);
 }
 
 /* TARJETAS */
 .card {
   background: var(--card);
   padding: 15px;
-  border-radius: 15px;
+  border-radius: 18px;
   margin: 10px 0;
+  box-shadow: var(--shadow);
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
 }
 
 .big {
@@ -75,33 +97,58 @@ body {
   align-items: center;
 }
 
-/* BOTONES */
+/* BOTÓN CHECK */
 .check {
   border: none;
-  padding: 8px 12px;
-  border-radius: 10px;
+  padding: 8px 14px;
+  border-radius: 12px;
   background: var(--primary);
   color: white;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.check:active {
+  transform: scale(0.9);
 }
 
 /* INPUT */
 .add-box {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 input {
   flex: 1;
-  padding: 10px;
-  border-radius: 10px;
+  padding: 12px;
+  border-radius: 12px;
   border: none;
+  outline: none;
+  background: var(--card);
+  box-shadow: var(--shadow);
 }
 
+/* BOTÓN AGREGAR */
 .add-box button {
-  padding: 10px 15px;
+  padding: 12px 16px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--primary);
   color: white;
+  font-size: 18px;
+  transition: 0.2s;
+}
+
+.add-box button:active {
+  transform: scale(0.9);
+}
+
+/* BOTÓN MODO */
+#toggleTheme {
+  border: none;
+  background: var(--card);
+  padding: 8px 12px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
 }
