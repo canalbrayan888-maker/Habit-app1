@@ -116,11 +116,11 @@ input {
   font-weight: bold;
   text-align: center;
   transition: 0.3s;
-  width: 18vw;        /* responsive width */
-  max-width: 80px;     /* max width */
-  height: 25vw;        /* responsive height */
-  max-height: 100px;   /* max height */
-  font-size: 3vw;      /* responsive font */
+  width: 18vw;
+  max-width: 80px;
+  height: 25vw;
+  max-height: 100px;
+  font-size: 3vw;
   color: white;
 }
 
@@ -152,7 +152,7 @@ input {
 }
 
 /* ----------------- MODAL ----------------- */
-.modal {
+#cardModal {
   position: fixed;
   top: 30%;
   left: 50%;
@@ -160,7 +160,7 @@ input {
   z-index: 100;
 }
 
-.modal.active {
+#cardModal.active {
   animation: pop 0.4s ease;
 }
 
