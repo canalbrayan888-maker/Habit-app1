@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habit App</title>
+
+<style>
+:root {
+  --bg: #ffffff;
+  --text: #111;
+  --card: #f2f2f2;
+  --primary: #4CAF50;
+}
+
+.dark {
+  --bg: #0f0f0f;
+  --text: #ffffff;
+  --card: #1c1c1c;
+}
+
+body {
+  margin: 0;
+  font-family: Arial;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* NAV */
+.nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  background: var(--card);
+}
+
+.nav button {
+  flex: 1;
+  padding: 15px;
+  border: none;
+  background: none;
+  font-size: 16px;
+}
+
+/* PANTALLAS */
+.screen {
+  display: none;
+  padding: 20px;
+  padding-bottom: 80px;
+}
+
+.active {
+  display: block;
+}
+
+/* CARDS */
+.card {
+  background: var(--card);
+  padding: 15px;
+  border-radius: 15px;
+  margin: 10px 0;
+}
+
+/* BOTONES */
+button {
+  cursor: pointer;
+}
+
+.add-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+
+/* TOGGLE */
+#toggleTheme {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<button id="toggleTheme">🌙</button>
+
+<!-- PANTALLA 1 -->
+<div id="home" class="screen active">
+  <h2>Mis hábitos</h2>
+  <div id="habitList"></div>
+
+  <input type="text" id="habitInput" placeholder="Nuevo hábito">
+  <button class="add-btn" onclick="addHabit()">Agregar</button>
+</div>
+
+<!-- PANTALLA 2 -->
+<div id="stats" class="screen">
+  <h2>Estadísticas</h2>
+  <p id="statsText"></p>
+</div>
+
+<!-- PANTALLA 3 -->
+<div id="motivation" class="screen">
+  <h2>Motivación</h2>
+  <div class="card" id="quote"></div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button onclick="showScreen('home')">🏠</button>
+  <button onclick="showScreen('stats')">📊</button>
+  <button onclick="showScreen('motivation')">✨</button>
+</div>
+
+<script>
+// DATOS
+let habits = JSON.parse(localStorage.getItem("habits")) || [];
+
+// MOSTRAR PANTALLAS
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+// AGREGAR HÁBITO
+function addHabit() {
+  const input = document.getElementById("habitInput");
+  if (input.value === "") return;
+
+  habits.push({ name: input.value, done: false });
+  input.value = "";
+
+  save();
+  render();
+}
+
+// MARCAR COMPLETADO
+function toggleHabit(index) {
+  habits[index].done = !habits[index].done;
+  save();
+  render();
+}
+
+// GUARDAR
+function save() {
+  localStorage.setItem("habits", JSON.stringify(habits));
+}
+
+// RENDER
+function render() {
+  const list = document.getElementById("habitList");
+  list.innerHTML = "";
+
+  let completed = 0;
+
+  habits.forEach((h,
