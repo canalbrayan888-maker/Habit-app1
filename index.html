@@ -2,34 +2,37 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Habit Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css">
 
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <link rel="manifest" href="manifest.json">
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div class="header">
-  <h2>Habit Pro</h2>
+  <h2>🔥 Habit Pro</h2>
   <button id="toggleTheme">🌙</button>
 </div>
 
+<!-- HOME -->
 <div id="home" class="screen active">
   <h3>Hoy</h3>
 
   <div id="habitList"></div>
 
   <div class="add-box">
-    <input type="text" id="habitInput" placeholder="Nuevo hábito...">
+    <input id="habitInput" placeholder="Nuevo hábito...">
     <button onclick="addHabit()">+</button>
   </div>
 </div>
 
+<!-- STATS -->
 <div id="stats" class="screen">
   <h3>Progreso</h3>
 
@@ -38,19 +41,37 @@
   </div>
 
   <p id="statsText"></p>
+
+  <div class="card">
+    <h4>Historial</h4>
+    <div id="calendar"></div>
+  </div>
 </div>
 
+<!-- MOTIVACIÓN -->
 <div id="motivation" class="screen">
   <h3>Motivación</h3>
-  <div class="card big" id="quote"></div>
+  <div class="card" id="quote"></div>
 </div>
 
+<!-- CARTAS -->
+<div id="cards" class="screen">
+  <h3>🎴 Cartas</h3>
+  <div id="cardsContainer"></div>
+</div>
+
+<!-- NAV -->
 <div class="nav">
   <button onclick="showScreen('home')">🏠</button>
   <button onclick="showScreen('stats')">📊</button>
   <button onclick="showScreen('motivation')">✨</button>
+  <button onclick="showScreen('cards')">🎴</button>
 </div>
 
+<!-- MODAL CARTA (FLIP) -->
+<div id="cardModal"></div>
+
+<!-- JS -->
 <script src="app.js"></script>
 
 </body>
