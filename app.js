@@ -5,8 +5,9 @@ const quote = document.getElementById("quote");
 const btnTheme = document.getElementById("toggleTheme");
 
 let chart;
+let selectedCard = null;
 
-// 🎴 CARTAS (30 hasta 1000)
+// 🎴 CARTAS
 const rewards = [
   { streak: 3, name: "Inicio", msg: "Todo empieza contigo" },
   { streak: 5, name: "Constante", msg: "La disciplina nace" },
@@ -16,9 +17,9 @@ const rewards = [
   { streak: 50, name: "Monstruo", msg: "Disciplina brutal" },
   { streak: 75, name: "Máquina", msg: "No hay excusas" },
   { streak: 100, name: "Dios", msg: "Nivel legendario" },
-  { streak: 130, name: "Titán", msg: "Eres constante de verdad" },
+  { streak: 130, name: "Titán", msg: "Eres constante" },
   { streak: 160, name: "Alpha", msg: "Dominas tu mente" },
-  { streak: 200, name: "Rey", msg: "Muy pocos llegan aquí" },
+  { streak: 200, name: "Rey", msg: "Muy pocos llegan" },
   { streak: 250, name: "Maestro", msg: "Control total" },
   { streak: 320, name: "Sabio", msg: "Disciplina absoluta" },
   { streak: 400, name: "Invencible", msg: "Nada te detiene" },
@@ -46,85 +47,86 @@ function showScreen(id) {
   document.getElementById(id).classList.add("active");
 }
 
-// AGREGAR HÁBITO
+// HÁBITOS
 function addHabit() {
-  if (input.value.trim() === "") return;
+  if (!input.value.trim()) return;
 
-  data.habits.push({
-    name: input.value,
-    done: false
-  });
-
+  data.habits.push({ name: input.value, done: false });
   input.value = "";
-  save();
-  render();
+  save(); render();
 }
 
-// ELIMINAR
-function deleteHabit(index) {
-  data.habits.splice(index, 1);
-  save();
-  render();
+function deleteHabit(i) {
+  data.habits.splice(i, 1);
+  save(); render();
 }
 
-// TOGGLE
-function toggleHabit(index) {
-  data.habits[index].done = !data.habits[index].done;
+function toggleHabit(i) {
+  data.habits[i].done = !data.habits[i].done;
 
   const today = new Date().toISOString().split("T")[0];
+  const done = data.habits.filter(h => h.done).length;
+  const percent = (done / data.habits.length) * 100;
 
-  const completed = data.habits.filter(h => h.done).length;
-  const total = data.habits.length;
-  const percent = total > 0 ? (completed / total) * 100 : 0;
-
-  if (percent >= 80) {
-    data.history[today] = true;
-  } else {
-    delete data.history[today];
-  }
+  if (percent >= 80) data.history[today] = true;
+  else delete data.history[today];
 
   checkStreak();
-  save();
-  render();
+  save(); render();
 }
 
-// RACHA INTELIGENTE
+// RACHA
 function checkStreak() {
   const today = new Date().toISOString().split("T")[0];
-
   if (data.lastDate === today) return;
 
-  const completed = data.habits.filter(h => h.done).length;
-  const total = data.habits.length;
-  const percent = total > 0 ? (completed / total) * 100 : 0;
+  const done = data.habits.filter(h => h.done).length;
+  const percent = (done / data.habits.length) * 100;
 
   if (percent >= 80) {
     data.streak++;
     data.fails = 0;
-    data.history[today] = true;
     checkRewards();
   } else {
     data.fails++;
-
     if (data.fails >= 2) {
       data.streak = 0;
       data.fails = 0;
     }
-
-    delete data.history[today];
   }
 
   data.lastDate = today;
 }
 
-// 🎴 RECOMPENSAS
+// 🎴 DESBLOQUEO
 function checkRewards() {
   rewards.forEach(r => {
     if (data.streak >= r.streak && !data.rewardsUnlocked.includes(r.streak)) {
       data.rewardsUnlocked.push(r.streak);
-      alert("🎉 Nueva carta: " + r.name);
+      selectedCard = r;
+      setTimeout(() => showCardModal(r), 300);
     }
   });
+}
+
+// MODAL CARTA 💀
+function showCardModal(card) {
+  const modal = document.getElementById("cardModal");
+  modal.classList.add("active");
+
+  modal.innerHTML = `
+    <div class="card-flip">
+      <div class="card-inner flipped">
+        <div class="card-front">?</div>
+        <div class="card-back">
+          <h2>${card.name}</h2>
+          <p>${card.msg}</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  setTimeout(() => modal.classList.remove("active"), 2500);
 }
 
 // GUARDAR
@@ -135,66 +137,49 @@ function save() {
 // RENDER
 function render() {
   list.innerHTML = "";
-
-  if (data.habits.length === 0) {
-    list.innerHTML = `<div class="card">Agrega hábitos 🚀</div>`;
-    return;
-  }
-
-  let completed = 0;
+  let done = 0;
 
   data.habits.forEach((h, i) => {
-    if (h.done) completed++;
+    if (h.done) done++;
 
     list.innerHTML += `
-      <div class="card habit ${h.done ? "done" : ""}">
+      <div class="card habit">
         <span>${h.name}</span>
         <div>
-          <button class="check" onclick="toggleHabit(${i})">
-            ${h.done ? "✔" : "○"}
-          </button>
+          <button onclick="toggleHabit(${i})">${h.done ? "✔" : "○"}</button>
           <button onclick="deleteHabit(${i})">🗑️</button>
         </div>
       </div>
     `;
   });
 
-  let percent = Math.round((completed / data.habits.length) * 100);
+  let percent = data.habits.length ? Math.round((done / data.habits.length) * 100) : 0;
 
-  statsText.innerHTML = `
-    🔥 Racha: ${data.streak}<br>
-    📊 ${percent}%
-  `;
+  statsText.innerHTML = `🔥 ${data.streak} días<br>📊 ${percent}%`;
 
-  renderChart(completed, data.habits.length);
+  renderChart(done, data.habits.length);
   renderCalendar();
   renderCards();
 }
 
 // GRÁFICA
-function renderChart(completed, total) {
+function renderChart(done, total) {
   const ctx = document.getElementById("chart");
   if (!ctx) return;
-
   if (chart) chart.destroy();
 
   chart = new Chart(ctx, {
     type: "doughnut",
-    data: {
-      labels: ["Hecho", "Falta"],
-      datasets: [{
-        data: [completed, total - completed]
-      }]
-    }
+    data: { labels: ["Hecho", "Falta"], datasets: [{ data: [done, total - done] }] }
   });
 }
 
 // CALENDARIO
 function renderCalendar() {
-  const calendar = document.getElementById("calendar");
-  if (!calendar) return;
+  const cal = document.getElementById("calendar");
+  if (!cal) return;
 
-  calendar.innerHTML = "";
+  cal.innerHTML = "";
 
   for (let i = 60; i >= 0; i--) {
     const d = new Date();
@@ -203,33 +188,25 @@ function renderCalendar() {
     const key = d.toISOString().split("T")[0];
 
     const div = document.createElement("div");
-    div.classList.add("day");
+    div.className = "day " + (data.history[key] ? "done" : "");
 
-    if (data.history[key]) {
-      div.classList.add("done");
-    }
-
-    calendar.appendChild(div);
+    cal.appendChild(div);
   }
 }
 
 // CARTAS
 function renderCards() {
-  const container = document.getElementById("cardsContainer");
-  if (!container) return;
+  const c = document.getElementById("cardsContainer");
+  if (!c) return;
 
-  container.innerHTML = "";
+  c.innerHTML = "";
 
   rewards.forEach(r => {
     const unlocked = data.rewardsUnlocked.includes(r.streak);
 
-    container.innerHTML += `
-      <div class="card reward ${unlocked ? "unlocked" : ""}" onclick="openCard(${r.streak})">
-        ${
-          unlocked
-            ? `<h4>${r.name}</h4><p>${r.msg}</p>`
-            : `<div class="locked">?</div>`
-        }
+    c.innerHTML += `
+      <div class="reward ${unlocked ? "unlocked" : ""}" onclick="openCard(${r.streak})">
+        ${unlocked ? `<h4>${r.name}</h4>` : `<div class="locked">?</div>`}
       </div>
     `;
   });
@@ -237,61 +214,38 @@ function renderCards() {
 
 // ABRIR CARTA
 function openCard(streak) {
-  const reward = rewards.find(r => r.streak === streak);
+  const r = rewards.find(x => x.streak === streak);
 
   if (!data.rewardsUnlocked.includes(streak)) {
-    alert("🔒 Desbloquea con racha de " + streak);
+    alert("🔒 Necesitas racha de " + streak);
     return;
   }
 
-  alert("🎴 " + reward.name + "\n\n" + reward.msg);
+  showCardModal(r);
 }
 
 // FRASES
-const quotes = [
-  "Hazlo sin ganas",
-  "Disciplina > motivación",
-  "Un día o día uno"
-];
+quote.innerText = ["Sigue", "No pares", "Disciplina"][Math.floor(Math.random()*3)];
 
-quote.innerText = quotes[Math.floor(Math.random() * quotes.length)];
-
-// MODO OSCURO
-if (localStorage.getItem("theme") === "dark") {
-  document.body.classList.add("dark");
-}
-
+// DARK MODE
 btnTheme.onclick = () => {
   document.body.classList.toggle("dark");
-  localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
 };
 
 // SWIPE
 let startX = 0;
-
-document.addEventListener("touchstart", e => {
-  startX = e.touches[0].clientX;
-});
-
+document.addEventListener("touchstart", e => startX = e.touches[0].clientX);
 document.addEventListener("touchend", e => {
   let endX = e.changedTouches[0].clientX;
-
   if (startX - endX > 50) nextScreen();
   if (endX - startX > 50) prevScreen();
 });
 
-const screens = ["home", "stats", "motivation", "cards"];
+const screens = ["home","stats","motivation","cards"];
 let current = 0;
 
-function nextScreen() {
-  current = (current + 1) % screens.length;
-  showScreen(screens[current]);
-}
+function nextScreen(){current=(current+1)%screens.length;showScreen(screens[current]);}
+function prevScreen(){current=(current-1+screens.length)%screens.length;showScreen(screens[current]);}
 
-function prevScreen() {
-  current = (current - 1 + screens.length) % screens.length;
-  showScreen(screens[current]);
-}
-
-// INICIO
+// INIT
 render();
