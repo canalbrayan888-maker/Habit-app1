@@ -9,27 +9,35 @@
 
 <body>
 
-<!-- BOTÓN MODO -->
-<button id="toggleTheme">🌙</button>
+<!-- HEADER -->
+<div class="header">
+  <h2>Habit Pro</h2>
+  <button id="toggleTheme">🌙</button>
+</div>
 
-<!-- PANTALLAS -->
+<!-- PANTALLA HABITOS -->
 <div id="home" class="screen active">
-  <h1>Mis hábitos</h1>
-
+  <h3>Hoy</h3>
   <div id="habitList"></div>
 
-  <input type="text" id="habitInput" placeholder="Nuevo hábito...">
-  <button class="main-btn" onclick="addHabit()">Agregar</button>
+  <div class="add-box">
+    <input type="text" id="habitInput" placeholder="Nuevo hábito...">
+    <button onclick="addHabit()">+</button>
+  </div>
 </div>
 
+<!-- STATS -->
 <div id="stats" class="screen">
-  <h1>Estadísticas</h1>
-  <p id="statsText"></p>
+  <h3>Progreso</h3>
+  <div class="card">
+    <p id="statsText"></p>
+  </div>
 </div>
 
+<!-- MOTIVACION -->
 <div id="motivation" class="screen">
-  <h1>Motivación</h1>
-  <div class="card" id="quote"></div>
+  <h3>Motivación</h3>
+  <div class="card big" id="quote"></div>
 </div>
 
 <!-- NAV -->
